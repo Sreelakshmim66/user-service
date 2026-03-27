@@ -3,6 +3,7 @@ package com.internalproject.user_service.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data
@@ -54,8 +55,11 @@ public class User {
     private String firstName;
     private String lastName;
     private String mobileNumber;
-    private String password;
+
+    @Column(unique = true, nullable = false)
     private String emailId;
+    @Column(nullable = false)
+    private String password;
 
     public String getPassword() {
         return password;

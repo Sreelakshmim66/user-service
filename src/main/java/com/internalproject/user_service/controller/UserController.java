@@ -1,26 +1,28 @@
 package com.internalproject.user_service.controller;
 
+import com.internalproject.user_service.dto.LoginRequest;
 import com.internalproject.user_service.model.User;
 import com.internalproject.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
     UserService userService;
 
-//    @GetMapping("/listAllUsers")
-//    public List<User> listAllUsers() {
-//        return userService.listAllUsers();
-//    }
+    @GetMapping
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("User Service is running");
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<String> userLogin(@RequestParam String userId, @RequestParam String password) {
-        return userService.login(userId, password);
+    public ResponseEntity<String> userLogin(@RequestBody LoginRequest loginRequest) {
+        return userService.login(loginRequest.getUserId(), loginRequest.getPassword());
     }
 
     @PostMapping("/createUser")
