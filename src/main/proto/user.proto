@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option java_package = "com.internalproject.user_service.grpc";
+option java_outer_classname = "UserProto";
+option java_multiple_files = true;
+
+package user;
+
+service UserService {
+  rpc GetUser (GetUserRequest) returns (GetUserResponse);
+  rpc ValidateUser (ValidateUserRequest) returns (ValidateUserResponse);
+}
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message GetUserResponse {
+  string user_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email_id = 4;
+  string mobile_number = 5;
+  bool found = 6;
+}
+
+message ValidateUserRequest {
+  string user_id = 1;
+}
+
+message ValidateUserResponse {
+  bool valid = 1;
+  string message = 2;
+}

@@ -1,37 +1,40 @@
 package com.internalproject.user_service.controller;
 
-import com.internalproject.user_service.dto.LoginRequest;
-import com.internalproject.user_service.model.User;
+import com.internalproject.user_service.dto.*;
 import com.internalproject.user_service.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
-    @GetMapping
+    @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
         return ResponseEntity.ok("User Service is running");
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> userLogin(@RequestBody LoginRequest loginRequest) {
-        return userService.login(loginRequest.getUserId(), loginRequest.getPassword());
+    // POST /api/auth/login  (public - no JWT needed)
+    @PostMapping("/auth/login")
+    public ResponseEntity<LoginResponse> userLogin(@Valid @RequestBody LoginRequest loginRequest) {
+        return userService.login(loginRequest);
     }
 
-    @PostMapping("/createUser")
-    public ResponseEntity<String> newUserAdded(@RequestBody User user) {
-         return userService.createUser(user);
+    // POST /api/auth/register  (public - no JWT needed)
+    @PostMapping("/auth/register")
+    public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest request) {
+        return userService.createUser(request);
     }
 
-    @GetMapping("/fetchProfile/{userId}")
-    public ResponseEntity<User> fetchProfile(@PathVariable String userId) {
+    // GET /api/users/{userId}  (protected - requires JWT)
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserProfileResponse> fetchProfile(@PathVariable String userId) {
         return userService.fetchProfile(userId);
     }
 }

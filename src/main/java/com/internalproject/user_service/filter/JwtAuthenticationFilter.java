@@ -1,12 +1,15 @@
 package com.internalproject.user_service.filter;
 
-import com.internalproject.user_service.service.JwtService;
 import com.internalproject.user_service.service.CustomUserDetailsService;
+import com.internalproject.user_service.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,17 +23,19 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
+    @Autowired
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/api/login") ||
-               path.startsWith("/api/createUser") ||
-               path.equals("/api") ||
-               path.startsWith("/auth/");
+        // Skip JWT check for public endpoints
+        return path.startsWith("/api/auth/") || path.equals("/api/health");
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -42,6 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // If header missing or not Bearer → continue filter chain
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // No token - Spring Security will reject if endpoint is protected
             filterChain.doFilter(request, response);
             return;
         }
@@ -54,7 +60,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             userId = jwtService.validateAndExtractUserId(token);
         } catch (Exception e) {
-            filterChain.doFilter(request, response);
+            logger.warn("JWT validation failed: {}", e.getMessage());
+            // Send 401 immediately instead of passing to the chain unauthenticated
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid or expired token");
             return;
         }
 

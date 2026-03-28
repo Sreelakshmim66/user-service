@@ -5,8 +5,10 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LoginResponse {
-    private String message;
-    private String token;
+public class UserProfileResponse {
     private String userId;
+    private String firstName;
+    private String lastName;
+    private String emailId;
+    private String mobileNumber;
 }
