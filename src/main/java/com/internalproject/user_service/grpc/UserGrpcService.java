@@ -32,7 +32,7 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
                             .setUserId(user.getUserId())
                             .setFirstName(user.getFirstName())
                             .setLastName(user.getLastName() != null ? user.getLastName() : "")
-                            .setEmailId(user.getEmailId())
+                            .setEmailId(user.getEmail())
                             .setMobileNumber(user.getMobileNumber() != null ? user.getMobileNumber() : "")
                             .setFound(true)
                             .build();

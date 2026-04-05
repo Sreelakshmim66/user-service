@@ -30,7 +30,7 @@ public class User {
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
     @Column(name = "email_id", unique = true, nullable = false)
-    private String emailId;
+    private String email;
 
     @NotBlank(message = "Password is required")
     @Column(nullable = false)
