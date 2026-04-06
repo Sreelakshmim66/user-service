@@ -47,7 +47,7 @@ The `.proto` file lives at `src/main/proto/user.proto`. The `protobuf-maven-plug
 ## Key Configuration
 
 `src/main/resources/application.properties`:
-- PostgreSQL: `localhost:5433` (non-default port), database `postgres`
+- PostgreSQL: `localhost:5433` (non-default port), database `User-service`
 - `spring.jpa.hibernate.ddl-auto=update` — schema is auto-managed
 
 ## Data Model
